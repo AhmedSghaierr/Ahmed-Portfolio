@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CineVault — Movies & Series</title><meta name="theme-color" content="#0b0b10">
+<meta name="description" content="CineVault: a cinematic movie and series browser with trailers, seasons and episodes.">
+<style>
+:root{--bg:#0b0b10;--red:#e50914;--tx:#f3f3f7;--mu:#a3a3b2;--card:#16161f}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;overflow-x:hidden}
+button{font:inherit;color:inherit;cursor:pointer;border:0}a{color:inherit}
+.nav{position:fixed;inset:0 0 auto;z-index:50;display:flex;align-items:center;gap:22px;padding:14px clamp(14px,4vw,48px);background:linear-gradient(#000c,transparent);transition:background .35s,backdrop-filter .35s}
+.nav.solid{background:#0b0b10ee;backdrop-filter:blur(12px)}
+.logo{font-weight:900;letter-spacing:2px;color:var(--red);font-size:22px;text-decoration:none}.logo span{color:var(--tx)}
+.tabs{display:flex;gap:4px}.tabs button{background:transparent;padding:6px 12px;border-radius:6px;color:var(--mu)}.tabs button.on,.tabs button:hover{color:var(--tx)}
+.sp{flex:1}.ic{background:transparent;padding:8px;border-radius:50%;font-size:18px}.ic:hover{background:#ffffff1a}.back{font-size:12px;color:var(--mu);text-decoration:none}
+.hero{position:relative;height:min(86vh,720px);min-height:460px;overflow:hidden;display:flex;align-items:flex-end}
+.hero .bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 20%;animation:kb 22s ease-in-out infinite alternate;transition:opacity .9s}
+.hero .bg.out{opacity:0}
+@keyframes kb{to{transform:scale(1.1) translateX(-1.5%)}}
+.shade{position:absolute;inset:0;background:linear-gradient(90deg,#0b0b10f2 8%,#0b0b1066 55%,transparent),linear-gradient(0deg,var(--bg) 2%,transparent 45%)}
+.hc{position:relative;padding:0 clamp(14px,4vw,48px) clamp(50px,9vw,110px);max-width:680px;animation:up .9s both}
+@keyframes up{from{opacity:0;transform:translateY(26px)}}
+.hc h1{font-size:clamp(32px,6vw,68px);line-height:1.02;margin:0 0 10px;letter-spacing:-1.5px;text-shadow:0 4px 30px #000a}
+.meta{display:flex;gap:12px;align-items:center;color:var(--mu);font-size:13px;margin-bottom:10px}.badge{border:1px solid #ffffff44;border-radius:4px;padding:0 6px;font-size:11px}.star{color:#f5c518;font-weight:700}
+.hc p{margin:0 0 20px;color:#dcdce6;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 22px;border-radius:6px;font-weight:700;transition:transform .2s,background .2s}.btn:hover{transform:scale(1.05)}
+.btn.p{background:#fff;color:#000}.btn.s{background:#6d6d6eb3;color:#fff;margin-inline-start:10px}
+.rows{margin-top:-60px;position:relative;z-index:2;padding-bottom:60px}
+.row{margin:0 0 30px;opacity:0;transform:translateY(24px);transition:opacity .7s,transform .7s}.row.in{opacity:1;transform:none}
+.row h2{font-size:19px;margin:0 clamp(14px,4vw,48px) 10px}
+.rw{position:relative}.sc{display:flex;gap:10px;overflow-x:auto;scroll-behavior:smooth;padding:14px clamp(14px,4vw,48px);scrollbar-width:none;scroll-snap-type:x proximity;scroll-padding-inline:clamp(14px,4vw,48px)}.sc::-webkit-scrollbar{display:none}
+.ar{position:absolute;top:14px;bottom:14px;width:clamp(36px,4vw,56px);background:#0b0b10d0;z-index:3;opacity:0;transition:opacity .25s;font-size:26px}.rw:hover .ar{opacity:1}.ar.l{left:0}.ar.r{right:0}
+.card{flex:0 0 clamp(120px,15vw,190px);aspect-ratio:2/3;border-radius:8px;overflow:hidden;position:relative;background:var(--card);transition:transform .3s cubic-bezier(.2,.8,.2,1),box-shadow .3s;scroll-snap-align:start;animation:pop .6s both;animation-delay:calc(var(--i)*45ms)}
+@keyframes pop{from{opacity:0;transform:scale(.9)}}
+.card:hover,.card:focus-visible{transform:scale(1.12);z-index:4;box-shadow:0 14px 40px #000c;outline:none}
+.card img{width:100%;height:100%;object-fit:cover;display:block}.card .ti{position:absolute;inset:auto 0 0;padding:34px 10px 9px;background:linear-gradient(transparent,#000d);font-size:12px;font-weight:600;opacity:0;transition:opacity .25s;text-align:start}.card:hover .ti,.card:focus-visible .ti{opacity:1}
+.card .nm{display:grid;place-items:center;height:100%;padding:12px;text-align:center;color:var(--mu)}
+.sk{background:linear-gradient(90deg,#16161f,#22222e,#16161f);background-size:200% 100%;animation:sh 1.2s infinite}@keyframes sh{to{background-position:-200% 0}}
+.note{margin:0 clamp(14px,4vw,48px) 24px;padding:12px 16px;border:1px dashed #ffffff33;border-radius:8px;color:var(--mu);font-size:13px}
+dialog{border:0;padding:0;background:#14141c;color:var(--tx);width:min(860px,calc(100% - 20px));max-height:92vh;border-radius:14px;overflow:hidden;animation:md .35s cubic-bezier(.2,.8,.2,1)}
+@keyframes md{from{opacity:0;transform:scale(.94) translateY(20px)}}dialog::backdrop{background:#000b;backdrop-filter:blur(5px)}
+.mx{position:absolute;top:12px;right:12px;z-index:5;background:#000a;border-radius:50%;width:36px;height:36px;font-size:18px}
+.mi{overflow-y:auto;max-height:92vh}.ban{position:relative;aspect-ratio:16/8;background:#000}.ban img,.ban iframe{width:100%;height:100%;object-fit:cover;border:0;display:block}.ban:after{content:"";position:absolute;inset:auto 0 0;height:50%;background:linear-gradient(transparent,#14141c);pointer-events:none}.ban.vid:after{display:none}
+.mb{padding:4px 26px 28px}.mb h2{font-size:clamp(24px,4vw,36px);margin:0 0 8px}.gn{color:var(--mu);font-size:13px;margin:8px 0}.mb p{color:#d0d0dc}
+.seas{display:flex;gap:10px;align-items:center;margin:20px 0 8px}.seas select{background:#22222e;color:var(--tx);border:1px solid #ffffff22;border-radius:6px;padding:7px 10px;font:inherit}
+.ep{display:flex;gap:14px;padding:12px 0;border-top:1px solid #ffffff14;animation:up .4s both}.ep .n{font-size:20px;color:var(--mu);width:28px;flex:0 0 28px}.ep img,.ep .ph{width:130px;aspect-ratio:16/9;object-fit:cover;border-radius:6px;flex:0 0 130px;background:#22222e}.ep b{display:block}.ep small{color:var(--mu)}
+.sp2{position:fixed;inset:0;z-index:80;background:#0b0b10f5;backdrop-filter:blur(8px);padding:80px clamp(14px,4vw,48px) 30px;overflow-y:auto;display:none}.sp2.open{display:block;animation:up .3s both}
+.sp2 input{width:100%;background:transparent;border:0;border-bottom:2px solid var(--red);color:var(--tx);font-size:clamp(22px,4vw,34px);padding:10px 4px;outline:none}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px;margin-top:22px}.grid .card{flex:none;width:auto}
+.foot{color:var(--mu);font-size:12px;text-align:center;padding:30px 14px 50px}
+@media(max-width:640px){.tabs{display:none}.ep img,.ep .ph{width:96px;flex-basis:96px}.btn.s{margin:8px 0 0}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.row{opacity:1;transform:none}}
+</style></head><body>
+<header class="nav" id="nav"><a class="logo" href="#">CINE<span>VAULT</span></a>
+<nav class="tabs" id="tabs"><button class="on" data-f="all">Home</button><button data-f="movie">Movies</button><button data-f="tv">Series</button></nav><span class="sp"></span>
+<button class="ic" id="sbtn" aria-label="Search">🔍</button><a class="back" href="index.html">← ahmed.dev</a></header>
+<section class="hero" id="hero" aria-live="polite"><img class="bg" id="hbg" alt=""><div class="shade"></div><div class="hc" id="hc"></div></section>
+<main class="rows" id="rows"></main>
+<div class="sp2" id="sp"><button class="ic" id="sclose" style="position:absolute;top:16px;right:20px" aria-label="Close search">✕</button><input id="sq" placeholder="Search movies and series…" autocomplete="off" aria-label="Search"><div class="grid" id="sres"></div></div>
+<dialog id="md"><button class="mx" id="mx" aria-label="Close">✕</button><div class="mi" id="mi"></div></dialog>
+<div class="foot">CineVault · a portfolio project by Ahmed Sghaier · <span id="src"></span></div>
+<script>
+/* Paste a free TMDB v3 API key (themoviedb.org → Settings → API) to unlock movies + trailers. Empty = series mode (free TVMaze data). */
+const TMDB_KEY="";
+const $=id=>document.getElementById(id),esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const KEY=!!TMDB_KEY,TM="https://api.themoviedb.org/3",IMG="https://image.tmdb.org/t/p/";
+const J=u=>fetch(u).then(r=>{if(!r.ok)throw new Error(r.status);return r.json()});
+const tmdb=(p,q={})=>J(TM+p+"?"+new URLSearchParams({api_key:TMDB_KEY,language:"en-US",...q}));
+const tvm=p=>J("https://api.tvmaze.com"+p),h=u=>(u||"").replace("http:","https:"),strip=s=>(s||"").replace(/<[^>]+>/g,"");
+const nT=(x,ty)=>({src:"t",id:x.id,type:x.media_type||ty,title:x.title||x.name,year:(x.release_date||x.first_air_date||"").slice(0,4),rating:x.vote_average?x.vote_average.toFixed(1):"",overview:x.overview||"",poster:x.poster_path?IMG+"w342"+x.poster_path:"",backdrop:x.backdrop_path?IMG+"w1280"+x.backdrop_path:""});
+const nV=s=>({src:"v",id:s.id,type:"tv",title:s.name,year:(s.premiered||"").slice(0,4),rating:s.rating&&s.rating.average?s.rating.average.toFixed(1):"",overview:strip(s.summary),poster:s.image?h(s.image.medium):"",backdrop:s.image?h(s.image.original):"",genres:s.genres||[]});
+const store=new Map(),kk=i=>i.src+i.type+i.id,reg=i=>(store.set(kk(i),i),i);
+const card=(i,n=0)=>`<button class="card" data-k="${esc(kk(i))}" style="--i:${n}" aria-label="${esc(i.title)}">${i.poster?`<img src="${esc(i.poster)}" alt="" loading="lazy">`:`<span class="nm">${esc(i.title)}</span>`}<span class="ti">${esc(i.title)}${i.rating?` · ★ ${esc(i.rating)}`:""}</span></button>`;
+let hero=[],hi=0,filter="all",rowsDef=[];
+function rowEl(d){const s=document.createElement("section");s.className="row";s.dataset.t=d.type;s.innerHTML=`<h2>${esc(d.title)}</h2><div class="rw"><button class="ar l" aria-label="Scroll left">‹</button><div class="sc">${'<div class="card sk"></div>'.repeat(8)}</div><button class="ar r" aria-label="Scroll right">›</button></div>`;return s}
+const io=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting){x.target.classList.add("in");io.unobserve(x.target)}}),{threshold:.08});
+function fill(el,items){el.querySelector(".sc").innerHTML=items.map((i,n)=>card(reg(i),n)).join("")}
+async function init(){
+ $("src").textContent=KEY?"Data: TMDB":"Data: TVMaze (series mode)";
+ const box=$("rows");
+ if(KEY){
+  rowsDef=[["Trending now","mixed",()=>tmdb("/trending/all/week").then(r=>r.results.filter(x=>x.media_type!=="person").map(x=>nT(x)))],
+   ["Popular movies","movie",()=>tmdb("/movie/popular").then(r=>r.results.map(x=>nT(x,"movie")))],
+   ["Popular series","tv",()=>tmdb("/tv/popular").then(r=>r.results.map(x=>nT(x,"tv")))],
+   ["Top rated movies","movie",()=>tmdb("/movie/top_rated").then(r=>r.results.map(x=>nT(x,"movie")))],
+   ["Top rated series","tv",()=>tmdb("/tv/top_rated").then(r=>r.results.map(x=>nT(x,"tv")))],
+   ["Sci-fi & fantasy series","tv",()=>tmdb("/discover/tv",{with_genres:"10765",sort_by:"popularity.desc"}).then(r=>r.results.map(x=>nT(x,"tv")))],
+   ["Action movies","movie",()=>tmdb("/discover/movie",{with_genres:"28",sort_by:"popularity.desc"}).then(r=>r.results.map(x=>nT(x,"movie")))]];
+ }else{
+  let all=null;const get=()=>all||(all=Promise.all([tvm("/shows?page=0"),tvm("/shows?page=1")]).then(a=>a.flat().map(nV).filter(x=>x.poster)));
+  const by=g=>get().then(a=>a.filter(x=>x.genres.includes(g)).sort((p,q)=>(+q.rating||0)-(+p.rating||0)).slice(0,20));
+  rowsDef=[["Top rated series","tv",()=>get().then(a=>[...a].sort((p,q)=>(+q.rating||0)-(+p.rating||0)).slice(0,20))],["Drama","tv",()=>by("Drama")],["Comedy","tv",()=>by("Comedy")],["Science-Fiction","tv",()=>by("Science-Fiction")],["Crime","tv",()=>by("Crime")],["Thriller","tv",()=>by("Thriller")]];
+ }
+ box.innerHTML="";const els=rowsDef.map(d=>{const e=rowEl({title:d[0],type:d[1]});box.appendChild(e);io.observe(e);return e});
+ const res=await Promise.allSettled(rowsDef.map(d=>d[2]()));
+ res.forEach((r,n)=>{if(r.status==="fulfilled"&&r.value.length){fill(els[n],r.value);if(n<2)hero.push(...r.value.filter(x=>x.backdrop&&x.overview))}else els[n].remove()});
+ if(!box.children.length)box.innerHTML='<div class="note">Couldn’t load titles. Check your internet connection and refresh.</div>';
+ startHero();
+}
+function startHero(){hero=hero.slice(0,6);if(!hero.length){$("hc").innerHTML="<h1>CineVault</h1><p>Your cinematic vault of movies and series.</p>";return}setHero(0);if(hero.length>1)setInterval(()=>setHero((hi+1)%hero.length),9000)}
+function setHero(n){hi=n;const i=hero[n],bg=$("hbg");bg.classList.add("out");setTimeout(()=>{bg.src=i.backdrop;bg.alt=i.title;bg.classList.remove("out")},350);
+ const hc=$("hc");hc.style.animation="none";hc.offsetHeight;hc.style.animation="";
+ hc.innerHTML=`<h1>${esc(i.title)}</h1><div class="meta">${i.rating?`<span class="star">★ ${esc(i.rating)}</span>`:""}<span>${esc(i.year)}</span><span class="badge">${i.type==="tv"?"SERIES":"MOVIE"}</span></div><p>${esc(i.overview)}</p><button class="btn p" data-k="${esc(kk(i))}" data-play="1">▶ ${KEY?"Play trailer":"Details"}</button><button class="btn s" data-k="${esc(kk(i))}">ⓘ More info</button>`}
+/* modal */
+const md=$("md"),mi=$("mi");
+async function openItem(k,play){const i=store.get(k);if(!i)return;
+ mi.innerHTML=`<div class="ban"><img src="${esc(i.backdrop||i.poster)}" alt=""></div><div class="mb"><h2>${esc(i.title)}</h2><div class="meta">${i.rating?`<span class="star">★ ${esc(i.rating)}</span>`:""}<span>${esc(i.year)}</span><span class="badge">${i.type==="tv"?"SERIES":"MOVIE"}</span></div><p>${esc(i.overview)||"No description available."}</p><div id="dx"></div></div>`;
+ if(!md.open)md.showModal();md.scrollTop=0;mi.scrollTop=0;
+ try{
+  let trailer="",genres=i.genres||[],seasons=[];
+  if(i.src==="t"){const d=await tmdb(`/${i.type}/${i.id}`,{append_to_response:"videos"});genres=d.genres.map(g=>g.name);const v=(d.videos&&d.videos.results||[]).find(x=>x.site==="YouTube"&&x.type==="Trailer")||(d.videos&&d.videos.results||[])[0];trailer=v?v.key:"";seasons=(d.seasons||[]).filter(s=>s.season_number>0).map(s=>({n:s.season_number,id:s.season_number,c:s.episode_count}));if(d.runtime)genres.push(d.runtime+" min")}
+  else{const s=await tvm(`/shows/${i.id}/seasons`);seasons=s.map(x=>({n:x.number,id:x.id,c:x.episodeOrder}))}
+  const dx=$("dx");if(!dx)return;
+  dx.innerHTML=`<div class="gn">${genres.map(esc).join(" · ")}</div>${trailer?'<button class="btn p" id="tr">▶ Watch trailer</button>':""}<div id="se"></div><div id="eps"></div>`;
+  if(trailer){const go=()=>{const b=mi.querySelector(".ban");b.classList.add("vid");b.innerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(trailer)}?autoplay=1&rel=0" allow="autoplay; encrypted-media; fullscreen" allowfullscreen title="Trailer"></iframe>`;b.scrollIntoView({block:"nearest"})};$("tr").onclick=go;if(play)go()}
+  if(i.type==="tv"&&seasons.length){$("se").innerHTML=`<div class="seas"><b>Episodes</b><select id="ss" aria-label="Season">${seasons.map(s=>`<option value="${s.id}">Season ${s.n}${s.c?` (${s.c})`:""}</option>`).join("")}</select></div>`;
+   const load=async()=>{const e=$("eps");e.innerHTML='<div class="ep sk" style="height:70px"></div>';try{let list;if(i.src==="t"){const r=await tmdb(`/tv/${i.id}/season/${$("ss").value}`);list=r.episodes.map(x=>({n:x.episode_number,t:x.name,d:x.overview,img:x.still_path?IMG+"w300"+x.still_path:"",r:x.runtime}))}else{const r=await tvm(`/seasons/${$("ss").value}/episodes`);list=r.map(x=>({n:x.number,t:x.name,d:strip(x.summary),img:x.image?h(x.image.medium):"",r:x.runtime}))}
+     e.innerHTML=list.map((x,n)=>`<div class="ep" style="animation-delay:${n*30}ms"><span class="n">${esc(x.n)}</span>${x.img?`<img src="${esc(x.img)}" alt="" loading="lazy">`:'<span class="ph"></span>'}<div><b>${esc(x.t)}</b><small>${x.r?esc(x.r)+" min · ":""}${esc((x.d||"").slice(0,170))}</small></div></div>`).join("")||'<div class="gn">No episodes listed.</div>'}catch(_){e.innerHTML='<div class="gn">Couldn’t load episodes.</div>'}};
+   $("ss").onchange=load;load()}
+ }catch(e){const dx=$("dx");if(dx)dx.innerHTML='<div class="gn">More details are unavailable right now.</div>'}
+}
+$("mx").onclick=()=>md.close();md.addEventListener("close",()=>{mi.innerHTML=""});md.addEventListener("click",e=>{if(e.target===md)md.close()});
+document.addEventListener("click",e=>{const c=e.target.closest("[data-k]");if(c){openItem(c.dataset.k,c.dataset.play&&KEY);return}
+ const a=e.target.closest(".ar");if(a){const s=a.parentElement.querySelector(".sc");s.scrollBy({left:(a.classList.contains("l")?-1:1)*s.clientWidth*.85})}});
+/* nav, tabs, search */
+addEventListener("scroll",()=>$("nav").classList.toggle("solid",scrollY>40),{passive:true});
+$("tabs").onclick=e=>{const b=e.target.closest("button");if(!b)return;filter=b.dataset.f;document.querySelectorAll("#tabs button").forEach(x=>x.classList.toggle("on",x===b));
+ let shown=0;document.querySelectorAll(".row").forEach(r=>{const ok=filter==="all"||r.dataset.t===filter||r.dataset.t==="mixed"&&filter==="all";r.hidden=!ok;if(ok)shown++});
+ const old=document.getElementById("nt");if(old)old.remove();if(!shown&&filter==="movie")$("rows").insertAdjacentHTML("afterbegin",'<div class="note" id="nt">Movies need a free TMDB key. Add it to <b>TMDB_KEY</b> at the top of the script in cinevault.html to unlock movies and trailers.</div>');scrollTo({top:0,behavior:"smooth"})};
+const sp=$("sp");let tmr;
+$("sbtn").onclick=()=>{sp.classList.add("open");$("sq").focus()};$("sclose").onclick=()=>sp.classList.remove("open");
+addEventListener("keydown",e=>{if(e.key==="Escape")sp.classList.remove("open")});
+$("sq").oninput=()=>{clearTimeout(tmr);const q=$("sq").value.trim();if(q.length<2){$("sres").innerHTML="";return}
+ tmr=setTimeout(async()=>{try{const items=KEY?(await tmdb("/search/multi",{query:q})).results.filter(x=>x.media_type==="movie"||x.media_type==="tv").map(x=>nT(x)):(await tvm("/search/shows?q="+encodeURIComponent(q))).map(x=>nV(x.show));
+  $("sres").innerHTML=items.length?items.map((i,n)=>card(reg(i),n)).join(""):'<p class="gn">No results.</p>'}catch(e){$("sres").innerHTML='<p class="gn">Search failed. Try again.</p>'}},350)};
+$("sres").addEventListener("click",e=>{if(e.target.closest("[data-k]"))sp.classList.remove("open")});
+init();
+</script></body></html>
