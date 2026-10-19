@@ -59,7 +59,7 @@ dialog{border:0;padding:0;background:#14141c;color:var(--tx);width:min(860px,cal
 <div class="foot">CineVault · a portfolio project by Ahmed Sghaier · <span id="src"></span></div>
 <script>
 /* Paste a free TMDB v3 API key (themoviedb.org → Settings → API) to unlock movies + trailers. Empty = series mode (free TVMaze data). */
-const TMDB_KEY="";
+const TMDB_KEY="e80c4ac2851ab20db77422d53f9c846a";
 const $=id=>document.getElementById(id),esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const KEY=!!TMDB_KEY,TM="https://api.themoviedb.org/3",IMG="https://image.tmdb.org/t/p/";
 const J=u=>fetch(u).then(r=>{if(!r.ok)throw new Error(r.status);return r.json()});
