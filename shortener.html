@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Snipr — Link Shortener</title><meta name="theme-color" content="#0a1020">
+<meta name="description" content="Snipr: shorten long links, use custom aliases, get a QR code and track clicks.">
+<style>
+:root{--bg:#0a1020;--card:#121a33;--line:#25315a;--tx:#e8eeff;--mu:#8fa0c8;--a:#4f8cff;--b:#22d3ee;--ok:#34d399;--err:#ff6b8b}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(900px 500px at 15% -10%,#1b3b9a55,transparent),radial-gradient(800px 500px at 100% 10%,#0e749033,transparent),var(--bg);color:var(--tx);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+.wrap{max-width:820px;margin:0 auto;padding:22px 16px 70px}
+.top{display:flex;justify-content:space-between;align-items:center}.logo{font-weight:850;font-size:22px;letter-spacing:-.5px}.logo b{background:linear-gradient(90deg,var(--a),var(--b));-webkit-background-clip:text;background-clip:text;color:transparent}.top a{color:var(--mu);text-decoration:none;font-size:13px}
+h1{font-size:clamp(30px,6vw,52px);line-height:1.08;letter-spacing:-1.5px;margin:38px 0 8px;text-align:center}h1 span{background:linear-gradient(90deg,var(--a),var(--b));-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{text-align:center;color:var(--mu);margin:0 0 28px}
+.box{background:linear-gradient(160deg,#16204a,var(--card));border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 20px 60px #0007}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+input{font:inherit;color:var(--tx);background:#0c1430;border:1px solid var(--line);border-radius:12px;padding:14px;outline:none;min-width:0}input:focus{border-color:var(--a);box-shadow:0 0 0 3px #4f8cff30}
+#url{flex:1 1 280px}
+button{font:inherit;border:0;border-radius:12px;padding:14px 22px;cursor:pointer;font-weight:700;color:#fff;background:linear-gradient(90deg,var(--a),#2563eb);transition:transform .15s,filter .15s}button:hover{transform:translateY(-1px);filter:brightness(1.1)}button:disabled{opacity:.6;cursor:wait;transform:none}
+button.g{background:#1b2650;color:var(--tx);border:1px solid var(--line);padding:9px 14px;font-size:13px}
+.alias{display:flex;align-items:center;gap:8px;margin-top:12px;color:var(--mu);font-size:13px;flex-wrap:wrap}.alias input{padding:9px 12px;width:200px}
+#msg{min-height:22px;margin-top:10px;font-size:13px}.err{color:var(--err)}.demo{color:#fbbf24}
+.res{display:none;margin-top:16px;padding:16px;border:1px solid #2b6b57;background:#0c2a2599;border-radius:14px;animation:in .45s both}.res.show{display:block}
+@keyframes in{from{opacity:0;transform:translateY(12px) scale(.98)}}
+.sl{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.sl a{font-size:20px;font-weight:700;color:var(--ok);word-break:break-all;text-decoration:none}
+.qr{margin-top:14px;display:flex;gap:14px;align-items:center;color:var(--mu);font-size:12px}#qr{background:#fff;padding:8px;border-radius:10px;line-height:0}
+h2{font-size:15px;margin:34px 0 10px;color:var(--mu);font-weight:600;display:flex;justify-content:space-between;align-items:center}
+.it{display:grid;grid-template-columns:1fr auto;gap:6px 12px;padding:14px;border:1px solid var(--line);border-radius:12px;background:#10183a;margin-bottom:8px;animation:in .4s both}
+.it .s{color:var(--b);font-weight:650;word-break:break-all}.it .l{color:var(--mu);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;grid-column:1}.it .a{grid-row:1/3;grid-column:2;display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.cl{color:var(--mu);font-size:12px;min-width:64px;text-align:right}.empty{color:var(--mu);text-align:center;padding:22px;border:1px dashed var(--line);border-radius:12px}
+.feat{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:34px}.feat div{border:1px solid var(--line);border-radius:12px;padding:14px;background:#0f1733;font-size:13px;color:var(--mu)}.feat b{display:block;color:var(--tx);margin-bottom:3px}
+@media(max-width:620px){.feat{grid-template-columns:1fr}.it{grid-template-columns:1fr}.it .a{grid-row:auto;grid-column:1;justify-content:flex-start}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head><body><div class="wrap">
+<div class="top"><div class="logo">Snip<b>r</b></div><a href="index.html">← ahmed.dev</a></div>
+<h1>Make long links <span>short</span>.</h1><p class="sub">Paste a link, get a clean short one, a QR code and click tracking.</p>
+<form class="box" id="f" novalidate>
+ <div class="row"><input id="url" type="text" inputmode="url" placeholder="Paste your long link here…" aria-label="Long link" autocomplete="off"><button id="go" type="submit">Shorten</button></div>
+ <div class="alias"><span>Custom alias (optional)</span><input id="alias" maxlength="30" placeholder="my-link" aria-label="Custom alias" autocomplete="off"></div>
+ <div id="msg" role="status"></div>
+ <div class="res" id="res"><div class="sl"><a id="sa" target="_blank" rel="noopener"></a><button type="button" class="g" id="cp">Copy</button></div><div class="qr"><div id="qr"></div><span>Scan to open on your phone</span></div></div>
+</form>
+<h2><span>Your links</span><button class="g" id="clr" type="button">Clear list</button></h2><div id="list"></div>
+<div class="feat"><div><b>⚡ Instant</b>Short link in one click.</div><div><b>🏷️ Custom aliases</b>Pick a memorable name.</div><div><b>📊 Click tracking</b>See how many people open it.</div></div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" async></script>
+<script>
+/* Your Vercel address (no trailing slash), e.g. "https://ahmed-portfolio-api.vercel.app". Empty = demo mode (links work only in this browser). */
+const API_BASE="";
+const $=id=>document.getElementById(id),esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const KEY="snipr_v1",DEMO=!API_BASE;let hist=[],map={};
+try{hist=JSON.parse(localStorage.getItem(KEY)||"[]");map=JSON.parse(localStorage.getItem(KEY+"_map")||"{}")}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(hist.slice(0,30)));localStorage.setItem(KEY+"_map",JSON.stringify(map))}catch(e){}};
+const base=()=>location.origin+location.pathname;
+/* demo mode: open shortener.html#code to follow a locally saved link */
+if(DEMO&&location.hash.length>1){const u=map[location.hash.slice(1)];if(u&&/^https?:\/\//.test(u)){location.replace(u)}}
+const norm=v=>{v=v.trim();if(!v)return"";if(!/^[a-z][a-z0-9+.-]*:/i.test(v))v="https://"+v;try{const u=new URL(v);return /^https?:$/.test(u.protocol)&&u.hostname.includes(".")?u.href:""}catch(e){return""}};
+const msg=(t,c="")=>{$("msg").textContent=t;$("msg").className=c};
+async function create(url,alias){
+ if(!DEMO){
+  const r=await fetch(API_BASE+"/api/shorten",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({url,alias})});
+  const j=await r.json().catch(()=>({}));if(!r.ok||!j.ok)throw new Error(j.error||"Something went wrong.");return {code:j.code,short:j.short,url}}
+ let code=alias||Math.random().toString(36).slice(2,8);
+ if(!/^[A-Za-z0-9_-]{3,30}$/.test(code))throw new Error("Alias: 3-30 letters, numbers, - or _.");
+ if(map[code]&&map[code]!==url)throw new Error(alias?"That alias is taken.":"Try again.");
+ map[code]=url;return {code,short:base()+"#"+code,url}}
+function qr(text){const el=$("qr");el.innerHTML="";if(window.QRCode){try{new QRCode(el,{text,width:130,height:130,correctLevel:QRCode.CorrectLevel.M})}catch(e){}}if(!el.firstChild)el.parentElement.style.display="none";else el.parentElement.style.display="flex"}
+function show(it){const a=$("sa");a.href=it.short;a.textContent=it.short.replace(/^https?:\/\//,"");$("res").classList.add("show");qr(it.short)}
+function render(){
+ $("list").innerHTML=hist.length?hist.map((h,i)=>`<div class="it"><div class="s">${esc(h.short.replace(/^https?:\/\//,""))}</div><div class="l" title="${esc(h.url)}">${esc(h.url)}</div><div class="a"><span class="cl" data-c="${esc(h.code)}">${DEMO?"":"… clicks"}</span><button class="g" data-cp="${i}">Copy</button><button class="g" data-open="${i}">QR</button></div></div>`).join(""):'<div class="empty">No links yet. Shorten your first one above.</div>';
+ if(!DEMO)hist.slice(0,10).forEach(async h=>{try{const j=await (await fetch(`${API_BASE}/api/shorten?c=${encodeURIComponent(h.code)}`)).json();const el=document.querySelector(`.cl[data-c="${CSS.escape(h.code)}"]`);if(el&&j.ok)el.textContent=j.clicks+(j.clicks===1?" click":" clicks")}catch(e){}})}
+$("f").addEventListener("submit",async e=>{e.preventDefault();
+ const url=norm($("url").value);if(!url){msg("Please enter a valid link, like example.com/page.","err");return}
+ const alias=$("alias").value.trim();$("go").disabled=true;$("go").textContent="Shortening…";msg("");
+ try{const it=await create(url,alias);hist=[it,...hist.filter(x=>x.code!==it.code)];save();show(it);render();
+  msg(DEMO?"Demo mode: this link only works in this browser. Connect the backend for real short links.":"Done! Your short link is ready.",DEMO?"demo":"");$("url").value="";$("alias").value=""}
+ catch(err){$("res").classList.remove("show");msg(err.message||"Could not shorten. Try again.","err")}
+ finally{$("go").disabled=false;$("go").textContent="Shorten"}});
+$("cp").onclick=async()=>{try{await navigator.clipboard.writeText($("sa").href);$("cp").textContent="Copied ✓"}catch(e){$("cp").textContent="Press Ctrl+C"}setTimeout(()=>$("cp").textContent="Copy",1600)};
+$("list").addEventListener("click",async e=>{const c=e.target.closest("[data-cp]"),o=e.target.closest("[data-open]");
+ if(c){try{await navigator.clipboard.writeText(hist[+c.dataset.cp].short);c.textContent="Copied ✓"}catch(x){}setTimeout(()=>c.textContent="Copy",1400)}
+ if(o){show(hist[+o.dataset.open]);scrollTo({top:0,behavior:"smooth"})}});
+$("clr").onclick=()=>{if(hist.length&&confirm("Clear this list? Links stay active on the server.")){hist=[];if(DEMO)map={};save();render()}};
+render();
+</script></body></html>
